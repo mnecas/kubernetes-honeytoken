@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Config 
+clusters:
+- cluster:
+    certificate-authority-data: $CA_CRT
+    server: https://$KUBERNETES_ADDR
+  name: $CLUSTER_NAME
+contexts:
+- context:
+    cluster: $CLUSTER_NAME
+    user: $USER_NAME
+  name: $USER_NAME
+users:
+- name: $USER_NAME
+  user:
+    client-certificate-data: $USER_CRT
+    client-key-data: $USER_KEY
