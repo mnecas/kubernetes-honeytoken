@@ -1,6 +1,8 @@
 # Log all requests at the Metadata level.
 apiVersion: audit.k8s.io/v1
 kind: Policy
+omitStages:
+  - "RequestReceived"
 rules:
 - level: Request
   userGroups: ["$USER_GROUP"]

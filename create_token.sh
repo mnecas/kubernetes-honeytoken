@@ -2,13 +2,22 @@
 set -e
 
 # Mandatory variables
-export KUBERNETES_ADDR=${KUBERNETES_ADDR:?}
+# export KUBERNETES_ADDR=${KUBERNETES_ADDR:?}
 USER_NAME=${1:?}
+
 # Optional variables
 export CLUSTER_NAME=${CLUSTER_NAME:=cluster}
-TMP_DIR=${TMP_DIR:=tmp}
+TMP_DIR=${TMP_DIR:=/tmp/tokens}
 USER_GROUP=${USER_GROUP:=admin}
-echo "Creating user: $USER_NAME"
+
+# TODO: Add option for kubernetes port
+if [ -z "$KUBERNETES_ADDR" ]
+then
+      KUBERNETES_ADDR=$(podman inspect kind-control-plane | jq -r '.[].HostConfig.PortBindings."6443/tcp"[].HostIp')
+      export KUBERNETES_ADDR=$KUBERNETES_ADDR:6443
+fi
+
+echo "Creating user: '$USER_NAME' for cluster '$KUBERNETES_ADDR'"
 
 # Get CA cert and CA key
 mkdir -p $TMP_DIR
@@ -30,3 +39,6 @@ export USER_CRT=$(cat $USER_CRT_PATH | base64 -w0)
 export USER_KEY=$(cat $USER_KEY_PATH | base64 -w0)
 export CA_CRT=$(cat $CA_CRT_PATH | base64 -w0)
 envsubst < config/template.yaml > output/$USER_NAME.yaml
+
+# Cleanup tmp
+# rm $TMP_DIR/*
