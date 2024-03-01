@@ -1,5 +1,5 @@
 #!/bin/bash
 set -e
 
-podman kill webhook
+docker kill webhook
 kind delete cluster

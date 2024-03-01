@@ -10,10 +10,10 @@ export CLUSTER_NAME=${CLUSTER_NAME:=cluster}
 TMP_DIR=${TMP_DIR:=/tmp/tokens}
 USER_GROUP=${USER_GROUP:=admin}
 
-# TODO: Add option for kubernetes port
+# Get the kind IP from the port binding
 if [ -z "$KUBERNETES_ADDR" ]
 then
-      KUBERNETES_ADDR=$(podman inspect kind-control-plane | jq -r '.[].HostConfig.PortBindings."6443/tcp"[].HostIp')
+      KUBERNETES_ADDR=$(docker inspect kind-control-plane | jq -r '.[].HostConfig.PortBindings."6443/tcp"[].HostIp')
       export KUBERNETES_ADDR=$KUBERNETES_ADDR:6443
 fi
 
